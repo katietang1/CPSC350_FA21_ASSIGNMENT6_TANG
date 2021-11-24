@@ -31,3 +31,69 @@ bool StudentDatabase::shutDown() {
 
     return true;
 } 
+
+/* ***** student functions ***** */
+
+void StudentDatabase::addStudent() {
+
+}
+
+void StudentDatabase::displayStudent(int studentID) {
+    
+}
+
+void StudentDatabase::deleteStudent(int studentID) {
+    
+}
+
+void StudentDatabase::printAllStudents() {
+    
+}
+
+void StudentDatabase::printStudentAdvisor(int studentID) {
+    
+}
+
+void StudentDatabase::changeAdvisorID(int studentID, int facultyID) {
+    
+}
+
+/* ***** faculty functions ***** */
+
+void StudentDatabase::addFaculty() {
+    
+}
+
+void StudentDatabase::displayFaculty(int facultyID) {
+    
+}
+
+void StudentDatabase::deleteFaculty(int facultyID) {
+    
+}
+
+void StudentDatabase::printAllFaculty() {
+    
+}
+
+void StudentDatabase::printAdvisees(int facultyID) {
+    
+}
+
+void StudentDatabase::removeAdvisee(int studentID) {
+    
+}
+
+/* ***** program functions ***** */
+
+void StudentDatabase::fileProcessor() {
+    
+}
+
+void StudentDatabase::Rollback() {
+    
+}
+
+void StudentDatabase::exit() {
+    
+}

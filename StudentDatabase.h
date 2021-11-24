@@ -17,20 +17,21 @@ public:
     bool startUp(); 
     bool shutDown();
     //student functions
-    void printStudents(); //ascending ID#
-    void displayStudent(int studentID);
-    void printStudentFaculty(int studentID);
     void addStudent();
+    void displayStudent(int studentID);
     void deleteStudent(int studentID);
-    void changeAdvior(int studentID, int facultyID);
+    void printAllStudents(); //ascending ID#
+    void printStudentAdvisor(int studentID);
+    void changeAdvisorID(int studentID, int facultyID);
     //faculty functions
-    void printFaculties(); //ascending ID#
-    void displayFaculty(int facultyID);
-    void printFacultyAdvisee(int facultyID);
     void addFaculty();
+    void displayFaculty(int facultyID);
     void deleteFaculty(int facultyID);
+    void printAllFaculty(); //ascending ID#
+    void printAdvisees(int facultyID);
     void removeAdvisee(int studentID);
     //program functions
+    void fileProcessor();
     void Rollback();
     void exit();
 
