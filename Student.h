@@ -19,8 +19,8 @@ public:
     Student(int sID, std::string sName, std::string sLevel, std::string sMajor);
     Student(std::string sBuff);
     ~Student();
-    std::string toSString();
-    std::string toSDisplay();
+    std::string toString();
+    std::string toDisplay();
     int getStudentID();
     std::string getStudentName();
     std::string getStudentLevel();
@@ -29,6 +29,8 @@ public:
     void setStudentGPA(double sGPA);
     int getStudentAdvisorID();
     void setStudentAdvisorID(int sAdvisorID);
+    bool loadStudentsFromFile(std::string fileName);
+    bool saveStudentsToFile(std::string fileName);
 
 private:
     static int getNextStudentID();

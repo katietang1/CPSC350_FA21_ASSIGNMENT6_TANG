@@ -28,11 +28,11 @@ Student::~Student() {
     
 }
 
-std::string Student::toSString() {
+std::string Student::toString() {
     return " ";
 }
 
-std::string Student::toSDisplay() {
+std::string Student::toDisplay() {
     return " ";
 }
 
@@ -66,4 +66,12 @@ int Student::getStudentAdvisorID() {
 
 void Student::setStudentAdvisorID(int sAdvisorID) {
     
+}
+
+bool Student::loadStudentsFromFile(std::string fileName) {
+    return false;
+}
+
+bool Student::saveStudentsToFile(std::string fileName) {
+    return false;
 }

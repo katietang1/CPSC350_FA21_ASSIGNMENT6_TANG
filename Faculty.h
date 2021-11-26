@@ -18,14 +18,17 @@ public:
     Faculty(int fID, std::string fName, std::string fLevel, std::string fDepartment);
     Faculty(std::string fBuff);
     ~Faculty();
-    std::string toFString();
-    std::string toFDisplay();
+    std::string toString();
+    std::string toDisplay();
     int getFacultyID();
     std::string getFacultyName();
     std::string getFacultyLevel();
     std::string getFacultyDepartment();
     std::vector<int> getAdviseeList();
-    void setAdviseeList(int fStudentID);
+    bool setAdvisee(int fStudentID);
+    bool removeAdvisee(int fStudentID);
+    bool loadFacultyFromFile(std::string fileName);
+    bool saveFacultyToFile(std::string fileName);
 
 private:
     static int getNextFacultyID();

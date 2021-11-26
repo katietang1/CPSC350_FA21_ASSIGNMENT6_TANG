@@ -28,11 +28,11 @@ Faculty::~Faculty(){
     
 }
 
-std::string Faculty::toFString(){
+std::string Faculty::toString(){
     return " ";
 }
 
-std::string Faculty::toFDisplay(){
+std::string Faculty::toDisplay(){
     return " ";
 }
 int Faculty::getFacultyID(){
@@ -55,6 +55,18 @@ std::vector<int> Faculty::getAdviseeList(){
     //return vector;
 }
 
-void Faculty::setAdviseeList(int fStudentID){
-    
+bool Faculty::setAdvisee(int fStudentID){
+    return false;
+}
+
+bool Faculty::removeAdvisee(int fStudentID){
+    return false;
+}
+
+bool Faculty::loadFacultyFromFile(std::string fileName) {
+    return false;
+}
+
+bool Faculty::saveFacultyToFile(std::string fileName) {
+    return false;
 }
