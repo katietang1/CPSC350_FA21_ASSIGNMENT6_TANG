@@ -1,6 +1,7 @@
 #ifndef FACULTY_H
 #define FACULTY_H
 
+#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -15,6 +16,11 @@ private:
     std::vector<int> *adviseeListPtr;
 
 public:
+    //static methods
+    static int getNextFacultyID();
+    static void setLastFacultyID(int lastFID);
+    //object methods
+    Faculty();
     Faculty(int fID, std::string fName, std::string fLevel, std::string fDepartment);
     Faculty(std::string fBuff);
     ~Faculty();
@@ -29,11 +35,11 @@ public:
     bool removeAdvisee(int fStudentID);
     bool loadFacultyFromFile(std::string fileName);
     bool saveFacultyToFile(std::string fileName);
-
-private:
-    static int getNextFacultyID();
-    static void setLastFacultyID(int lastFID);
-
+    //operators
+    bool operator<(const Faculty& facultyB);
+    Faculty& operator=(const Faculty& facultyB);
+    bool operator==(const Faculty& facultyB);
+    //add another operator, add default constructor 
 };
 
 #endif 

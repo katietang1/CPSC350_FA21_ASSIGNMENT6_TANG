@@ -1,6 +1,7 @@
 #ifndef STUDENTDATABASE_H
 #define STUDENTDATABASE_H
 
+#include <iostream>
 #include "Student.h"
 #include "Faculty.h"
 #include "BST.h"
@@ -11,6 +12,10 @@ private:
     static const std::string facultyFileName;
     BST<Student> *masterStudentPtr;
     BST<Faculty> *masterFacultyPtr;
+    bool loadStudentsFromFile(std::string fileName);
+    bool saveStudentsToFile(std::string fileName);
+    bool loadFacultyFromFile(std::string fileName);
+    bool saveFacultyToFile(std::string fileName);
     
 public:
     StudentDatabase();
@@ -18,14 +23,14 @@ public:
     bool startUp(); 
     bool shutDown();
     //student functions
-    void addStudent(int studentID, std::string studentName, std::string studentLevel, std::string studentMajor, double GPA, int sAdvisorID);
+    int addStudent(std::string studentName, std::string studentLevel, std::string studentMajor, double GPA);
     void displayStudent(int studentID);
     void deleteStudent(int studentID);
     void printAllStudents(); //ascending ID#
     void printStudentAdvisor(int studentID);
     void changeAdvisorID(int studentID, int facultyID);
     //faculty functions
-    void addFaculty(int facultyID, std::string facultyName, std::string facultyLevel, std::string Department, std::vector<int> aList);
+    int addFaculty(int facultyID, std::string facultyName, std::string facultyLevel, std::string Department, std::vector<int> aList);
     void displayFaculty(int facultyID);
     void deleteFaculty(int facultyID);
     void printAllFaculty(); //ascending ID#

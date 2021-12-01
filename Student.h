@@ -2,6 +2,7 @@
 #define STUDENT_H
 
 #include <iostream>
+#include <fstream>
 #include "Faculty.h"
 
 class Student{
@@ -16,6 +17,11 @@ private:
     int studentAdvisorID;
 
 public:
+    //static methods
+    static int getNextStudentID();
+    static void setLastStudentID(int lastSID);
+    //object methods
+    Student();
     Student(int sID, std::string sName, std::string sLevel, std::string sMajor);
     Student(std::string sBuff);
     ~Student();
@@ -29,12 +35,12 @@ public:
     void setStudentGPA(double sGPA);
     int getStudentAdvisorID();
     void setStudentAdvisorID(int sAdvisorID);
-    bool loadStudentsFromFile(std::string fileName);
-    bool saveStudentsToFile(std::string fileName);
-
-private:
-    static int getNextStudentID();
-    static void setLastStudentID(int lastSID);
+    // bool loadStudentsFromFile(std::string fileName);
+    // bool saveStudentsToFile(std::string fileName);
+    //operators
+    bool operator<(const Student& studentB);
+    Student& operator=(const Student& studentB);
+    bool operator==(const Student& studentB);
 
 };
 

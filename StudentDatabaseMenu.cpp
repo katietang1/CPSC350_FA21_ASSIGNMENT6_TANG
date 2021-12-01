@@ -1,3 +1,4 @@
+#include <iostream>
 #include "StudentDatabase.h"
 
 //forward declarations 
@@ -7,19 +8,19 @@ void displaySelectedStudent();
 void displaySelectedFaculty();
 void displayStudentAdvisor();
 void displayFacultyAdvisees();
-void addStudent();
+int addStudent();
 void deleteStudent();
-void addFacultyMember();
+int addFacultyMember();
 void deleteFacultyMember();
 void changeStudentAdvisor();
 void removeFacultyAdvisee();
 void rollbackChange();
 void exitProgram();
-int selectOneStudent();
+int selectOneStudent(std::string aTitle);
 int selectOneStudent(std::vector<int> studentIDList);
-int selectOneFacultyMember();
-bool getNewStudentInfo(int *sID, std::string *sName, std::string *sLevel, std::string *Major, double *GPA, int *sAdvisorID);
-bool getNewFacultyInfo(int *fID, std::string *fName, std::string *fLevel, std::string *Department, std::vector<int> *aList);
+int selectOneFacultyMember(std::string aTitle);
+bool getNewStudentInfo(std::string *sName, std::string *sLevel, std::string *sMajor, double *sGPA, int *sAdvisorID);
+bool getNewFacultyInfo(std::string *fName, std::string *fLevel, std::string *Department, std::vector<int> *aList);
 
 //global variables
 StudentDatabase *masterDBPtr;
@@ -117,81 +118,94 @@ int main (int argc, char **argv){
 void displayAllStudents() {
     masterDBPtr->printAllStudents();
 }
+
 /* 2. Print all faculty and their information (sorted by ascending id #) */
 void displayAllFaculty() {
     masterDBPtr->printAllFaculty();
 }
+
 /* 3. Find and display student information given the students id */
 void displaySelectedStudent() {
-    int tempID = selectOneStudent();
+    int tempID = selectOneStudent("Select the student you want to display");
     masterDBPtr->displayStudent(tempID);
 }
 
 /*4. Find and display faculty information given the faculty id */
 void displaySelectedFaculty() {
-    int tempID = selectOneFacultyMember();
+    int tempID = selectOneFacultyMember("Select the faculty you want to display");
     masterDBPtr->displayFaculty(tempID);
 }
 
 /*5. Given a student’s id, print the name and info of their faculty advisor */
 void displayStudentAdvisor() {
-    int tempID = selectOneStudent();
+    int tempID = selectOneStudent("Select the student whose advisor you want to display");
     masterDBPtr->printStudentAdvisor(tempID);
 }
+
 /*6. Given a faculty id, print ALL the names and info of his/her advisees. */
 void displayFacultyAdvisees() {
-    int tempID = selectOneFacultyMember();
+    int tempID = selectOneFacultyMember("Select a faculty member whose advisees you want to display");
     masterDBPtr->getAdviseeList(tempID);
 }
+
 /*7. Add a new student */
-void addStudent() {
+int addStudent() {
     int studentID;
     std::string studentName;
     std::string studentLevel;
     std::string Major;
     double GPA;
-    int sAdvisorID;
-    if ( getNewStudentInfo(&studentID, &studentName, &studentLevel, &Major, &GPA, &sAdvisorID) ) {
-        masterDBPtr->addStudent(studentID, studentName, studentLevel, Major, GPA, sAdvisorID);
+    int AdvisorID;
+    if ( getNewStudentInfo(&studentName, &studentLevel, &Major, &GPA, &AdvisorID) ) {
+        studentID = masterDBPtr->addStudent( studentName, studentLevel, Major, GPA);
     }
-   
+    cout << "New student added, ID: " << studentID << endl;
+    return studentID;
 }
+
 /*8. Delete a student given the id */
 void deleteStudent() {
-    int tempID = selectOneStudent();
+    int tempID = selectOneStudent("Select the student you would like to delete");
     masterDBPtr->deleteStudent(tempID);
 }
+
 /*9. Add a new faculty member */
-void addFacultyMember() {
+int addFacultyMember() {
     int facultyID;
     std::string facultyName;
     std::string facultyLevel;
     std::string Department;
     std::vector<int> aList;
-    if ( getNewFacultyInfo(&facultyID, &facultyName, &facultyLevel, &Department, &aList) ) {
+    if ( getNewFacultyInfo(&facultyName, &facultyLevel, &Department, &aList) ) {
         masterDBPtr->addFaculty(facultyID, facultyName, facultyLevel, Department, aList);
     }
+    cout << "New faculty added, ID: " << facultyID << endl;
+    return facultyID;
 }
+
 /*10. Delete a faculty member given the id. */
 void deleteFacultyMember() {
-    int tempID = selectOneFacultyMember();
+    int tempID = selectOneFacultyMember("Select the faculty memebr you would like to delete");
     masterDBPtr->deleteFaculty(tempID);
 
 }
+
 /*11. Change a student’s advisor given the student id and the new faculty id. */
 void changeStudentAdvisor() {
-    int tempStudentID = selectOneStudent();
-    int tempFacultyID = selectOneFacultyMember();
+    int tempStudentID = selectOneStudent("Select the student for who's advisor you would like to change");
+    int tempFacultyID = selectOneFacultyMember("Select the advisor you like to remove");
     masterDBPtr->changeAdvisorID(tempStudentID, tempFacultyID);
 
 }
+
 /*12. Remove an advisee from a faculty member given the ids */
 void removeFacultyAdvisee() {
-    int tempFacultyID = selectOneFacultyMember();
+    int tempFacultyID = selectOneFacultyMember("Select the faculty member whose advisee you would like to remove");
     std::vector<int> aList = masterDBPtr->getAdviseeList(tempFacultyID);
     int tempStudentID = selectOneStudent(aList);
     masterDBPtr->removeAdvisee(tempFacultyID, tempStudentID);
 }
+
 /*13. Rollback */
 /*The Rollback command is used if the user realizes they have made a mistake in their data 
 processing.  The Rollback command will “undo” the previous action, but only if that 
@@ -203,30 +217,67 @@ void rollbackChange() {
 //create vector to store values 
 //keep track of operation 
 }
+
 /*14. Exit */
 /*If the user chooses to exit, you should write the faculty and student tables back out to the 
 “facultyTable” and “studentTable” files (see appendix A), clean up, and quit gracefully. */
 void exitProgram() {
 
 }
+
 /* ***** helper functions ***** */
 /* helper to select a single student and return ID*/
-int selectOneStudent() {
-
+int selectOneStudent(std::string aTitle) {
+    std::string tempIDStr;
+    int tempID;
+    cout << aTitle << endl;
+    cout << "Enter the ID of the student: ";
+    cin >> tempIDStr;
+    tempID = stoi(tempIDStr);
+    //look up ID in tree
+    //do while loop until we find it
 }
+
 /* helper to select a single student from Advisee list and return ID*/
 int selectOneStudent(std::vector<int> studentIDList) {
 
 }
+
 /* helper to select a single faculty and return ID*/
-int selectOneFacultyMember() {
-
+int selectOneFacultyMember(std::string aTitle) {
+    std::string tempIDStr;
+    int tempID;
+    cout << aTitle << endl;
+    cout << "Enter the ID of the Faculty: ";
+    cin >> tempIDStr;
+    tempID = stoi(tempIDStr);
+    //look up ID in tree
+    //do while loop until we find it
 }
 
-bool getNewStudentInfo(int *sID, std::string *sName, std::string *sLevel, std::string *Major, double *GPA, int *sAdvisorID) {
-    return false;
+bool getNewStudentInfo(std::string *sName, std::string *sLevel, std::string *sMajor, double *sGPA, int *sAdvisorID) {
+    cout << "Student Name: ";
+    cin >> *sName;
+    cout << "Level: ";
+    cin >> *sLevel;
+    cout << "Major: ";
+    cin >> *sMajor;
+    cout << "GPA: ";
+    cin >> *sGPA;
+    cout << "Advisor ID: ";
+    cin >> *sAdvisorID;
+    return true;
 }
 
-bool getNewFacultyInfo(int *fID, std::string *fName, std::string *fLevel, std::string *Department, std::vector<int> *aList) {
-    return false;
+bool getNewFacultyInfo(std::string *fName, std::string *fLevel, std::string *Department, std::vector<int> *aList) {
+    cout << "Faculty Name: ";
+    cin >> *fName;
+    cout << "Faculty Level: ";
+    cin >> *fLevel;
+    cout << "Faculty Department: ";
+    cin >> *Department;
+    cout << "Advisee IDs: ";
+    // loop in list 
+    //cin >> *aList;
+    return true;
 }
