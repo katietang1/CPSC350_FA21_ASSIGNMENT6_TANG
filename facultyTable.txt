@@ -1,3 +1,3 @@
-4920480,Rene German,Lecturer,Computer Science,2313452,2348593
-4902853,Ryan Mason,Associate Professor,Business,2315820,2304928
-4928592,Christopher Boyd,Assistant Professor,Computer Science
+4920,Rene German,Lecturer,Computer Science,2313,2348
+4902,Ryan Mason,Associate Professor,Business,2315,2304
+4928,Christopher Boyd,Assistant Professor,Computer Science

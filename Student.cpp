@@ -39,51 +39,51 @@ Student::Student(std::string sBuff) {
     size_t idIdx=0, nameIdx=0, levelIdx=0, majorIdx=0, gpaIdx=0;
     std::string tempToken;
     idIdx = sBuff.find_first_of (',', 0);
-    if (idIdx > 0) {
+    if (idIdx != std::string::npos) {
         nameIdx = sBuff.find_first_of (',', idIdx + 1);
-        if (nameIdx > 0) {
+        if (nameIdx != std::string::npos) {
             levelIdx = sBuff.find_first_of (',', nameIdx + 1);
-            if (levelIdx > 0) {
+            if (levelIdx != std::string::npos) {
                 majorIdx = sBuff.find_first_of (',', levelIdx + 1);
-                if (majorIdx > 0) {
+                if (majorIdx != std::string::npos) {
                     gpaIdx = sBuff.find_first_of (',', majorIdx + 1);
                 }
             }
         }
     }
-    if (idIdx > 0) {
+    if (idIdx != std::string::npos) {
         tempToken = sBuff.substr(0, idIdx);
         this->studentID = stoi(tempToken);
     } else {
         this->studentID = 0;
     }
 
-    if (nameIdx > 0) {
-        this->studentName = sBuff.substr(idIdx + 1, nameIdx - idIdx);
+    if (nameIdx != std::string::npos) {
+        this->studentName = sBuff.substr(idIdx + 1, nameIdx - idIdx-1);
     } else {
         this->studentName = "";
     }
 
-    if (levelIdx > 0) {
-        this->studentLevel = sBuff.substr(nameIdx + 1, levelIdx - nameIdx);
+    if (levelIdx != std::string::npos) {
+        this->studentLevel = sBuff.substr(nameIdx + 1, levelIdx - nameIdx-1);
     } else {
         this->studentLevel = "";
     }
 
-    if (majorIdx > 0) {
-        this->studentMajor  = sBuff.substr(levelIdx + 1, majorIdx - levelIdx);
+    if (majorIdx != std::string::npos) {
+        this->studentMajor  = sBuff.substr(levelIdx + 1, majorIdx - levelIdx-1);
     } else {
         this->studentMajor = "";
     }
 
-    if (gpaIdx > 0) {
-        tempToken = sBuff.substr(majorIdx + 1, gpaIdx - majorIdx);
+    if (gpaIdx != std::string::npos) {
+        tempToken = sBuff.substr(majorIdx + 1, gpaIdx - majorIdx-1);
         this->studentGPA = stod(tempToken);
     } else {
         this->studentGPA = 0.0;
     }
     
-    if (gpaIdx > 0) {
+    if (gpaIdx != std::string::npos) {
         tempToken = sBuff.substr(gpaIdx + 1);
         this->studentAdvisorID = stoi(tempToken);
     } else {
@@ -104,23 +104,23 @@ std::string Student::toDisplay() {
 }
 
 int Student::getStudentID() {
-    return -1;
+    return studentID;
 }
 
 std::string Student::getStudentName() {
-    return " ";
+    return studentName;
 }
 
 std::string Student::getStudentLevel() {
-    return " ";
+    return studentLevel;
 }
 
 std::string Student::getStudentMajor() {
-    return " ";
+    return studentMajor;
 }
 
 double Student::getStudentGPA() {
-    return -1.0;
+    return studentGPA;
 }
 
 void Student::setStudentGPA(double sGPA) {
@@ -128,20 +128,13 @@ void Student::setStudentGPA(double sGPA) {
 }
 
 int Student::getStudentAdvisorID() {
-    return -1;
+    return studentAdvisorID;
 }
 
 void Student::setStudentAdvisorID(int sAdvisorID) {
     
 }
 
-// bool Student::loadStudentsFromFile(std::string fileName) {
-    
-// }
-
-// bool Student::saveStudentsToFile(std::string fileName) {
-//     return false;
-// }
 
 bool Student::operator<(const Student& studentB) {
     return this->studentID < studentB.studentID;

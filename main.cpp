@@ -214,15 +214,15 @@ the last 5 commands that CHANGED the DB.  (Commands that simply display data do
 not count.)  This will involve keeping snapshots of the DB before and after commands 
 are issued.  The implementation details for this are left up to you.  */
 void rollbackChange() {
-//create vector to store values 
-//keep track of operation 
+    masterDBPtr->Rollback();
 }
 
 /*14. Exit */
 /*If the user chooses to exit, you should write the faculty and student tables back out to the 
 “facultyTable” and “studentTable” files (see appendix A), clean up, and quit gracefully. */
 void exitProgram() {
-
+    masterDBPtr->saveToFiles();
+    masterDBPtr->exit();
 }
 
 /* ***** helper functions ***** */
@@ -234,12 +234,22 @@ int selectOneStudent(std::string aTitle) {
     cout << "Enter the ID of the student: ";
     cin >> tempIDStr;
     tempID = stoi(tempIDStr);
+    cout << "The student you have selected is :";
+    return tempID;
     //look up ID in tree
     //do while loop until we find it
 }
 
 /* helper to select a single student from Advisee list and return ID*/
 int selectOneStudent(std::vector<int> studentIDList) {
+    std::string tempIDStr;
+    int tempID;
+    masterDBPtr->getAdviseeList(tempID);
+    cout << "Enter the ID of the advisee from the list: ";
+    cin >> tempIDStr;
+    tempID = stoi(tempIDStr);
+    cout << "The advisee you have selected is: ";
+    return tempID;
 
 }
 
@@ -251,6 +261,8 @@ int selectOneFacultyMember(std::string aTitle) {
     cout << "Enter the ID of the Faculty: ";
     cin >> tempIDStr;
     tempID = stoi(tempIDStr);
+    cout << "The faculty you have selected is :";
+    return tempID;
     //look up ID in tree
     //do while loop until we find it
 }
@@ -277,7 +289,8 @@ bool getNewFacultyInfo(std::string *fName, std::string *fLevel, std::string *Dep
     cout << "Faculty Department: ";
     cin >> *Department;
     cout << "Advisee IDs: ";
-    // loop in list 
-    //cin >> *aList;
+    // for (int i = 0; i < masterDBPtr.adviseeListPtr->size(); i++) {
+    //     cin >> 
+    // }
     return true;
 }

@@ -35,8 +35,6 @@ public:
     void setStudentGPA(double sGPA);
     int getStudentAdvisorID();
     void setStudentAdvisorID(int sAdvisorID);
-    // bool loadStudentsFromFile(std::string fileName);
-    // bool saveStudentsToFile(std::string fileName);
     //operators
     bool operator<(const Student& studentB);
     Student& operator=(const Student& studentB);

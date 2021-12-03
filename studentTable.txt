@@ -1,4 +1,4 @@
-2313452,Katie Tang,Senior,Business Administration,3.6,4920480
-2315820,Derek Stein,Senior,Psychology,3.4,4902853
-2348593,Jimmy Hyun,Sophmore,Data Analytics,3.3,4920480
-2304928,Haley Roberston,Junior,Chemistry,3.6,4902853
+2313,Katie Tang,Senior,Business Administration,3.6,4920
+2315,Derek Stein,Senior,Psychology,3.4,4902
+2348,Jimmy Hyun,Sophmore,Data Analytics,3.3,4920
+2304,Haley Roberston,Junior,Chemistry,3.6,4902

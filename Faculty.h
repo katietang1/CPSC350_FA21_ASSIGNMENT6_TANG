@@ -30,11 +30,9 @@ public:
     std::string getFacultyName();
     std::string getFacultyLevel();
     std::string getFacultyDepartment();
-    std::vector<int> getAdviseeList();
+    std::vector<int>* getAdviseeList();
     bool setAdvisee(int fStudentID);
     bool removeAdvisee(int fStudentID);
-    bool loadFacultyFromFile(std::string fileName);
-    bool saveFacultyToFile(std::string fileName);
     //operators
     bool operator<(const Faculty& facultyB);
     Faculty& operator=(const Faculty& facultyB);

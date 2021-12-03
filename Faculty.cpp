@@ -30,52 +30,68 @@ Faculty::Faculty(int fID, std::string fName, std::string fLevel, std::string fDe
     this->facultyName = fName;
     this->facultyLevel = fLevel;
     this->facultyDepartment = facultyDepartment;
-    //this->adviseeListPtr = 
+    this->adviseeListPtr = new std::vector<int>();
 }
 
 Faculty::Faculty(std::string fBuff){
-     size_t idIdx=0, nameIdx=0, levelIdx=0, departIdx=0;
+    size_t idIdx=0, nameIdx=0, levelIdx=0, departIdx=0;
     std::string tempToken;
+    this->adviseeListPtr = new std::vector<int>();
     idIdx = fBuff.find_first_of (',', 0);
-    if (idIdx > 0) {
+    if (idIdx != std::string::npos) {
         nameIdx = fBuff.find_first_of (',', idIdx + 1);
-        if (nameIdx > 0) {
+        if (nameIdx != std::string::npos) {
             levelIdx = fBuff.find_first_of (',', nameIdx + 1);
-            if (levelIdx > 0) {
+            if (levelIdx != std::string::npos) {
                 departIdx = fBuff.find_first_of (',', levelIdx + 1);
             }
         }
     }
-    if (idIdx > 0) {
+    if (idIdx != std::string::npos) {
         tempToken = fBuff.substr(0, idIdx);
         this->facultyID = stoi(tempToken);
     } else {
         this->facultyID = 0;
     }
 
-    if (nameIdx > 0) {
-        this->facultyName = fBuff.substr(idIdx + 1, nameIdx - idIdx);
+    if (nameIdx != std::string::npos) {
+        this->facultyName = fBuff.substr(idIdx + 1, nameIdx - idIdx -1);
     } else {
         this->facultyName = "";
     }
 
-    if (levelIdx > 0) {
-        this->facultyLevel = fBuff.substr(nameIdx + 1, levelIdx - nameIdx);
+    if (levelIdx != std::string::npos) {
+        this->facultyLevel = fBuff.substr(nameIdx + 1, levelIdx - nameIdx -1);
     } else {
         this->facultyLevel = "";
     }
 
-    if (departIdx > 0) {
-        this->facultyDepartment  = fBuff.substr(levelIdx + 1, departIdx - levelIdx);
+    if (departIdx != std::string::npos) {
+        this->facultyDepartment  = fBuff.substr(levelIdx + 1, departIdx - levelIdx-1);
     } else {
         this->facultyDepartment = "";
     }
     
-    if (departIdx > 0) {
+    if (departIdx != std::string::npos) {
+        std::string tempAdviseeStr;
+        int tempIdx = departIdx, tempAdvisee;
+        int startIdx, length;
         tempToken = fBuff.substr(departIdx + 1);
-        //this->adviseeListPtr = stoi(tempToken);
+        while (tempIdx > 0) {
+            tempIdx = fBuff.find_first_of (',', departIdx + 1);
+            if (tempIdx != std::string::npos) {
+                startIdx = departIdx + 1;
+                length = tempIdx - departIdx -1;
+                tempAdviseeStr = fBuff.substr(startIdx, length);
+                departIdx = tempIdx;
+            } else {
+                tempAdviseeStr = fBuff.substr(departIdx + 1);
+            }
+            tempAdvisee = stoi(tempAdviseeStr);
+            this->adviseeListPtr->push_back(tempAdvisee);
+        }
     } else {
-        //this->adviseeListPtr = 0;
+        this->adviseeListPtr = nullptr;
     }
 }
 
@@ -90,39 +106,35 @@ std::string Faculty::toString(){
 std::string Faculty::toDisplay(){
     return " ";
 }
+
 int Faculty::getFacultyID(){
-    return -1;
+    return facultyID;
 }
 
 std::string Faculty::getFacultyName(){
-    return " ";
+    return facultyName;
 }
 
 std::string Faculty::getFacultyLevel(){
-    return " ";
+    return facultyLevel;
 }
 
 std::string Faculty::getFacultyDepartment(){
-    return " ";
+    return facultyDepartment;
 }
 
-std::vector<int> Faculty::getAdviseeList(){
-    //return vector;
+std::vector<int>* Faculty::getAdviseeList(){
+    return adviseeListPtr;
 }
 
 bool Faculty::setAdvisee(int fStudentID){
-    return false;
+    //check advisee list for fStudentID
+    //if not on list, push_back, and return true
+    //if on the list, return false
+    return true;
 }
 
 bool Faculty::removeAdvisee(int fStudentID){
-    return false;
-}
-
-bool Faculty::loadFacultyFromFile(std::string fileName) {
-    return false;
-}
-
-bool Faculty::saveFacultyToFile(std::string fileName) {
     return false;
 }
 

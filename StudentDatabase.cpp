@@ -14,6 +14,9 @@ StudentDatabase::~StudentDatabase() {
 }
 
 bool StudentDatabase::startUp() {
+    bool studentsLoaded, facultyLoaded;
+    
+    //create empty faculty and student trees
     if (masterStudentPtr == nullptr){
         masterStudentPtr = new BST<Student>();  //finds space in the heap, calls constructor
     }
@@ -21,6 +24,21 @@ bool StudentDatabase::startUp() {
         masterFacultyPtr = new BST<Faculty>();
     }
 
+    //attempt to load student from file
+    studentsLoaded = loadStudentsFromFile(studentFileName);
+    if (studentsLoaded == true) {
+        cout << "Student table loaded from file." << endl;
+    } else {
+        cout << "No student table file, empty tree created" << endl;
+    }
+
+    //attempt to load faculty from file
+    facultyLoaded = loadFacultyFromFile(facultyFileName);
+    if (facultyLoaded == true) {
+        cout << "Faculty table loaded from file." << endl;
+    } else {
+        cout << "No faculty table file, empty tree created" << endl;
+    }
     return true;
 }                          
 
@@ -53,19 +71,23 @@ int StudentDatabase::addStudent(std::string studentName, std::string studentLeve
 }
 
 void StudentDatabase::displayStudent(int studentID) {
-    
+    //find student with ID
+    //get string from ToDisplay
+    //Student::toDisplay()
+    //cout 
+    //?
 }
 
 void StudentDatabase::deleteStudent(int studentID) {
-    
+    //masterStudentPtr->deleteNode(*masterStudentPtr);
 }
 
 void StudentDatabase::printAllStudents() {
-    
+   //masterStudentPtr->recPrint(*masterStudentPtr);
 }
 
 void StudentDatabase::printStudentAdvisor(int studentID) {
-    
+
 }
 
 void StudentDatabase::changeAdvisorID(int studentID, int facultyID) {
@@ -95,11 +117,11 @@ void StudentDatabase::deleteFaculty(int facultyID) {
 }
 
 void StudentDatabase::printAllFaculty() {
-    
+    // masterFacultyPtr->recPrint(*masterFacultyPtr);
 }
 
 void StudentDatabase::printAdvisees(int facultyID) {
-    
+    // print list
 }
 
 void StudentDatabase::removeAdvisee(int facultyID, int studentID) {
@@ -129,23 +151,50 @@ bool StudentDatabase::loadStudentsFromFile(std::string fileName) {
     std::string line;
     std::ifstream studentFile;
     Student *newStudent;
-    studentFile.open(studentFileName);
+    studentFile.open(fileName);
     if (!studentFile) {
-        std::cout << "ERROR: Invald file" << std::endl;
+        std::cout << "ERROR: Invalid file or no file found" << std::endl;
+        return false;
     }
     while (!studentFile.eof()) {
-        while (getline(studentFile, line)) {
-            newStudent = new Student(line);
-            masterStudentPtr->insert(*newStudent);
+        getline(studentFile, line);
+        if ( !studentFile.eof() ) {
+            if ( studentFile.good() ) {
+                newStudent = new Student(line);
+                masterStudentPtr->insert(*newStudent);
+            } else {
+                cout << "ERROR: Unable to create student node" <<endl;
+            }
         }
     }
     studentFile.close();
 
-    return false;
+    return true;
 }
 
 bool StudentDatabase::loadFacultyFromFile(std::string fileName) {
+    std::string line;
+    std::ifstream facultyFile;
+    Faculty *newFaculty;
+    facultyFile.open(fileName);
+    if (!facultyFile) {
+        std::cout << "ERROR: Invalid file or no file found" << std::endl;
+        return false;
+    }
+    while (!facultyFile.eof()) {
+        getline(facultyFile, line);
+        if ( !facultyFile.eof() ) {
+            if ( facultyFile.good() ) {
+                newFaculty = new Faculty(line);
+                masterFacultyPtr->insert(*newFaculty);
+            } else {
+                cout << "ERROR: Unable to create faculty node" <<endl;
+            }
+        }
+    }
+    facultyFile.close();
 
+    return true;
 }
 
 bool StudentDatabase::saveToFiles() {
@@ -161,9 +210,10 @@ bool StudentDatabase::saveFacultyToFile(std::string fileName) {
 }
 
 void StudentDatabase::Rollback() {
-    
+    //use stack to store operations and data
 }
 
 void StudentDatabase::exit() {
-    
+    //delete allocated storage 
+    //exit 0;
 }
