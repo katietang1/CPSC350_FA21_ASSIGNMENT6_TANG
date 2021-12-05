@@ -71,27 +71,60 @@ int StudentDatabase::addStudent(std::string studentName, std::string studentLeve
 }
 
 void StudentDatabase::displayStudent(int studentID) {
-    //find student with ID
-    //get string from ToDisplay
-    //Student::toDisplay()
-    //cout 
-    //?
+    Student tempStudent(studentID, "", "", "");
+    Student *tempPtr = masterStudentPtr->find(tempStudent);
+    if (tempPtr != nullptr) { 
+        cout << tempPtr->toDisplay() << endl;
+    } else {
+        cout << "ERROR: No such student" << endl;
+    }
 }
 
 void StudentDatabase::deleteStudent(int studentID) {
-    //masterStudentPtr->deleteNode(*masterStudentPtr);
+    Student tempStudent(studentID, "", "", "");
+    Student *tempPtr = masterStudentPtr->find(tempStudent);
+    if (tempPtr == nullptr) { 
+        cout << "ERROR: No such student" << endl; //print ID
+    } else {
+        masterStudentPtr->deleteNode(*tempPtr);
+    }
 }
 
 void StudentDatabase::printAllStudents() {
-   //masterStudentPtr->recPrint(*masterStudentPtr);
+   masterStudentPtr->printNodes();
 }
 
 void StudentDatabase::printStudentAdvisor(int studentID) {
-
+    Student tempStudent(studentID, "", "", "");
+    Student *tempStudentPtr = masterStudentPtr->find(tempStudent);
+    if (tempStudentPtr == nullptr) {
+        cout << "ERROR: No such student" << endl;
+    } else {
+        int studentAdvisorID = tempStudentPtr->getStudentAdvisorID();
+        //check if student has ID
+        if ( studentAdvisorID == 0) {
+            cout << "ERROR: This student does not have an advisor assigned" << endl;
+        } else {
+            Faculty tempFaculty(studentAdvisorID, "", "", "");
+            Faculty *tempFacultyPtr = masterFacultyPtr->find(tempFaculty);
+            if (tempFacultyPtr == nullptr) {
+                cout << "ERROR: Student faculty advisor " << studentAdvisorID << " not found" << endl;
+            } else {
+                cout << "Student advisor: " << tempFacultyPtr->toDisplay() << endl;
+            }
+        }
+    }
 }
 
 void StudentDatabase::changeAdvisorID(int studentID, int facultyID) {
-    
+    Student tempStudent(studentID, "", "", "");
+    Student *tempStudentPtr = masterStudentPtr->find(tempStudent);
+    if (tempStudentPtr == nullptr) {
+        cout << "ERROR: No such student" << endl;
+    } else {
+        tempStudentPtr->setStudentAdvisorID(facultyID);
+        cout << "Student advisor changed" << endl;
+    }
 }
 
 /* ***** faculty functions ***** */
@@ -104,32 +137,53 @@ int StudentDatabase::addFaculty(int facultyID, std::string facultyName, std::str
         cout << "ERROR: Unable to construct new faculty" << endl;
         return 0;
     }
-    //newFaculty->setAdvisee(aList);
+    for( std::vector<int>::iterator it = aList.begin() ; it != aList.end(); ++it ) {
+        newFaculty->setAdvisee(*it);
+    }
     masterFacultyPtr->insert(*newFaculty);
 }
 
 void StudentDatabase::displayFaculty(int facultyID) {
-    
+    Faculty tempFaculty(facultyID, "", "", "");
+    Faculty *tempPtr = masterFacultyPtr->find(tempFaculty);
+    if (tempPtr != nullptr) { 
+        cout << tempPtr->toDisplay() << endl;
+    } else {
+        cout << "ERROR: No such faculty" << endl;
+    }
 }
 
 void StudentDatabase::deleteFaculty(int facultyID) {
-    
+    Faculty tempFaculty(facultyID, "", "", "");
+    Faculty *tempPtr = masterFacultyPtr->find(tempFaculty);
+    if (tempPtr == nullptr) { 
+        cout << "ERROR: No such faculty" << endl; //print ID
+    } else {
+        masterFacultyPtr->deleteNode(*tempPtr);
+    }
 }
 
 void StudentDatabase::printAllFaculty() {
-    // masterFacultyPtr->recPrint(*masterFacultyPtr);
+    masterFacultyPtr->printNodes();
 }
 
 void StudentDatabase::printAdvisees(int facultyID) {
-    // print list
+    std::vector<int> aList = getAdviseeList(facultyID);
+    for( std::vector<int>::iterator it = aList.begin() ; it != aList.end(); ++it ) {
+        cout << *it << endl;
+    }
 }
 
 void StudentDatabase::removeAdvisee(int facultyID, int studentID) {
-    
+    Faculty tempFaculty(facultyID, "", "", "");
+    tempFaculty.removeAdvisee(studentID);
+    cout << "Advisee: " << studentID << " removed.";
 }
 
 std::vector<int> StudentDatabase::getAdviseeList(int facultyID) {
-
+    Faculty tempFaculty(facultyID, "", "", "");
+    std::vector<int> aList = *tempFaculty.getAdviseeList();
+    return aList;
 }
 
 /* ***** program functions ***** */
@@ -161,6 +215,9 @@ bool StudentDatabase::loadStudentsFromFile(std::string fileName) {
         if ( !studentFile.eof() ) {
             if ( studentFile.good() ) {
                 newStudent = new Student(line);
+                if ( newStudent->getStudentID() > Student::getLastStudentID() ) {
+                    Student::setLastStudentID(newStudent->getStudentID() );
+                }
                 masterStudentPtr->insert(*newStudent);
             } else {
                 cout << "ERROR: Unable to create student node" <<endl;
@@ -168,7 +225,6 @@ bool StudentDatabase::loadStudentsFromFile(std::string fileName) {
         }
     }
     studentFile.close();
-
     return true;
 }
 
@@ -186,6 +242,9 @@ bool StudentDatabase::loadFacultyFromFile(std::string fileName) {
         if ( !facultyFile.eof() ) {
             if ( facultyFile.good() ) {
                 newFaculty = new Faculty(line);
+                if ( newFaculty->getFacultyID() > Faculty::getLastFacultyID() ) {
+                    Faculty::setLastFacultyID(newFaculty->getFacultyID() );
+                }
                 masterFacultyPtr->insert(*newFaculty);
             } else {
                 cout << "ERROR: Unable to create faculty node" <<endl;
@@ -193,27 +252,60 @@ bool StudentDatabase::loadFacultyFromFile(std::string fileName) {
         }
     }
     facultyFile.close();
-
     return true;
 }
 
 bool StudentDatabase::saveToFiles() {
-    
+    bool rVal = true;
+    if ( ! saveStudentsToFile(studentFileName) ) {
+        cout << "ERROR: Unable to save students to file" << endl;
+        rVal = false;
+    }
+    if ( ! saveFacultyToFile(facultyFileName) ) {
+        cout << "ERROR: Unable to save faculty to file" << endl;
+        rVal = false;
+    }
+    return rVal;
 }
 
 bool StudentDatabase::saveStudentsToFile(std::string fileName) {
-
+    std::ofstream studentFile;
+    Student *tempStudentPtr;
+    std::string tempStr;
+    studentFile.open(studentFileName);
+    TreeNode<Student> *nextNode = masterStudentPtr->getFirst();
+    while (nextNode != nullptr) {
+        tempStudentPtr = &(nextNode->key);
+        tempStr = tempStudentPtr->toString();
+        studentFile << tempStr << endl;
+        nextNode = masterStudentPtr->getSuccessor(nextNode);
+    }
+    studentFile.close();
 }
 
 bool StudentDatabase::saveFacultyToFile(std::string fileName) {
-
+    std::ofstream facultyFile;
+    Faculty *tempFacultyPtr;
+    std::string tempStr;
+    facultyFile.open(facultyFileName);
+    TreeNode<Faculty> *nextNode = masterFacultyPtr->getFirst();
+    while (nextNode != nullptr) {
+        tempFacultyPtr = &(nextNode->key);
+        tempStr = tempFacultyPtr->toString();
+        facultyFile << tempStr << endl;
+        nextNode = masterFacultyPtr->getSuccessor(nextNode);
+    }
+    facultyFile.close();
 }
 
 void StudentDatabase::Rollback() {
+    
+    //get data for functions that changed the tree
     //use stack to store operations and data
 }
 
 void StudentDatabase::exit() {
-    //delete allocated storage 
-    //exit 0;
+    delete masterStudentPtr;
+    delete masterFacultyPtr;
+    exit();
 }

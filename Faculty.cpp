@@ -10,6 +10,10 @@ int Faculty::getNextFacultyID(){
     return ++Faculty::lastFacultyID;
 }
 
+int Faculty::getLastFacultyID() {
+    return Faculty::lastFacultyID;
+}
+
 void Faculty::setLastFacultyID(int lastFID){
     if (lastFID > Faculty::lastFacultyID){
         Faculty::lastFacultyID = lastFID;
@@ -99,12 +103,36 @@ Faculty::~Faculty(){
     
 }
 
-std::string Faculty::toString(){
-    return " ";
+std::string Faculty::toString() const {
+    std::string facultyStr;
+    std::string adviseesStr;
+    std::string adviseeStr;
+    for( std::vector<int>::iterator it = adviseeListPtr->begin() ; it != adviseeListPtr->end(); ++it ) {
+        adviseeStr = std::to_string(*it);
+        adviseesStr += adviseeStr + ",";
+    }
+    facultyStr = std::to_string(this->facultyID) + "," 
+                + this->facultyName + ","
+                + this->facultyLevel + "," 
+                + this->facultyDepartment + ","
+                + adviseesStr;
+    return facultyStr;
 }
 
-std::string Faculty::toDisplay(){
-    return " ";
+std::string Faculty::toDisplay() const {
+    std::string facultyDisplay;
+    std::string adviseesStr;
+    std::string adviseeStr;
+    for( std::vector<int>::iterator it = adviseeListPtr->begin() ; it != adviseeListPtr->end(); ++it ) {
+        adviseeStr = std::to_string(*it);
+        adviseesStr += adviseeStr + ",";
+    }
+    facultyDisplay = "Faculty ID: " + std::to_string(this->facultyID) + "\n" 
+                    + "Faculty Name: " + this->facultyName + "\n"
+                    + "Faculty Level: " + this->facultyLevel + "\n" 
+                    + "Faculty Major: " + this->facultyDepartment + "\n"
+                    + "Faculty Advisee(s): " + adviseesStr;
+    return facultyDisplay;
 }
 
 int Faculty::getFacultyID(){
@@ -127,34 +155,59 @@ std::vector<int>* Faculty::getAdviseeList(){
     return adviseeListPtr;
 }
 
-bool Faculty::setAdvisee(int fStudentID){
-    //check advisee list for fStudentID
-    //if not on list, push_back, and return true
-    //if on the list, return false
-    return true;
+bool Faculty::setAdvisee( int fStudentID ){
+    if( this->advises(fStudentID) ) {
+        std::cout << "ERROR: Faculty already has this student as an advisee" << std::endl;
+        return false;
+    } else {
+        adviseeListPtr->push_back( fStudentID ); 
+        return true;
+    }
 }
 
-bool Faculty::removeAdvisee(int fStudentID){
+bool Faculty::removeAdvisee( int fStudentID ){
+    for( std::vector<int>::iterator it = adviseeListPtr->begin() ; it != adviseeListPtr->end(); ++it ) {
+        if( *it == fStudentID ) {
+            adviseeListPtr->erase(it);
+            return true;
+        }
+    }
+    std::cout << "ERROR: Faculty does not have this advisee" << std::endl;
     return false;
 }
 
-bool Faculty::operator<(const Faculty& facultyB) {
+bool Faculty::advises( int fStudentID ) {
+    bool rVal = false;
+    for( int idx = 0; idx < adviseeListPtr->size(); idx++ ) {
+        if( adviseeListPtr->at(idx) == fStudentID ) {
+            rVal = true;
+        } 
+    }
+    return rVal;
+}
+
+bool Faculty::operator<( const Faculty& facultyB ) {
     return this->facultyID < facultyB.facultyID;
 }
 
-Faculty& Faculty::operator=(const Faculty& facultyB) {
-    if ( this != &facultyB) {
+Faculty& Faculty::operator=( const Faculty& facultyB ) {
+    if ( this != &facultyB ) {
         this->facultyID = facultyB.facultyID;
         this->facultyName = facultyB.facultyName;
         this->facultyLevel = facultyB.facultyLevel;
         this->facultyDepartment = facultyB.facultyDepartment;
-        for (int i = 0; i < facultyB.adviseeListPtr->size(); i++) {
+        for( int i = 0; i < facultyB.adviseeListPtr->size(); i++ ) {
             this->adviseeListPtr->push_back( facultyB.adviseeListPtr->at(i) );
         }
     }
     return *this;
 }
 
-bool Faculty::operator==(const Faculty& facultyB) {
+bool Faculty::operator==( const Faculty& facultyB ) {
     return this->facultyID == facultyB.facultyID;
+}
+
+std::ostream& operator<<(std::ostream &out, Faculty &f) {
+    out << f.toDisplay();
+    return out;
 }

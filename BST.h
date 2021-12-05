@@ -43,12 +43,14 @@ class BST{
         BST();
         virtual ~BST();
         void insert(T value);
-        bool constains(T value); //search
+        bool contains(T value); //search
+        T *find(T target);
         bool deleteNode(T k);
         bool isEmpty();
 
         T* getMin();
         T* getMax();
+        TreeNode<T> *getFirst();
         TreeNode<T> *getSuccessor(TreeNode <T> *d); // d represents the node we are going to delete
         void printNodes();
         void recPrint(TreeNode<T> *node);
@@ -90,10 +92,10 @@ template <class T>
 void BST<T>::recPrint(TreeNode<T> *node){
     if (node == nullptr)
         return;
-    cout << node->key << endl; //preorder
     if (node->left != nullptr){
         recPrint(node ->left);
     }
+    cout << node->key << endl;
     if (node->right != nullptr){
         recPrint(node->right);
     }
@@ -170,7 +172,7 @@ void BST<T>::insert(T value){
 }
 
 template <class T> 
-bool BST<T>::constains(T value){
+bool BST<T>::contains(T value) {
     if (isEmpty())
         return false;
     else {
@@ -190,7 +192,24 @@ bool BST<T>::constains(T value){
 }
 
 template <class T> 
-bool BST<T>::deleteNode(T k){
+T *BST<T>::find(T target) {
+    TreeNode<T> *current = root;
+    while(current != nullptr && ! (current->key == target)){
+        if (current->key < target) {
+            current = current->right;
+        } else {
+            current = current->left;
+        }
+    }
+    if ( current == nullptr) {
+        return nullptr;
+    } else {
+        return &(current->key);
+    }   
+}
+
+template <class T> 
+bool BST<T>::deleteNode(T k) {
     if (isEmpty())
         return false;
     //not empty, we need to find it and set our pointers
@@ -198,7 +217,7 @@ bool BST<T>::deleteNode(T k){
     TreeNode<T> *parent = root;
     bool isLeft = true;
 
-    while(current->key !=k){
+    while(!(current->key == k)){
         parent = current;
 
         if(k <current->key){
@@ -214,7 +233,7 @@ bool BST<T>::deleteNode(T k){
     }
     // if we make it here, we found the node, now lets proceed to delete
     /*no children, node to be deleted is a leaf*/
-    if(current->left == NULL && current->right = NULL){
+    if(current->left == NULL && current->right == NULL){
         if(current == root)
             root = NULL;
         else if (isLeft)
@@ -260,7 +279,18 @@ bool BST<T>::deleteNode(T k){
 }
 
 template <class T>
-//d represents the the node to be deleted
+TreeNode<T> *BST<T>::getFirst() {
+    TreeNode<T> *current = root;
+    if(isEmpty())
+        return NULL;
+    while(current ->left != NULL){
+        current = current->left;
+    }
+    return current;
+}
+
+template <class T>
+// get the next node in order as determined by the type 
 TreeNode<T>* BST<T>::getSuccessor(TreeNode<T> *d){
     TreeNode<T> *sp = d; //successors parent 
     TreeNode<T> *successor = d;

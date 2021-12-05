@@ -241,10 +241,12 @@ int selectOneStudent(std::string aTitle) {
 }
 
 /* helper to select a single student from Advisee list and return ID*/
-int selectOneStudent(std::vector<int> studentIDList) {
+int selectOneStudent(std::vector<int> aList) {
     std::string tempIDStr;
     int tempID;
-    masterDBPtr->getAdviseeList(tempID);
+    for (int i = 0; i < aList.size(); i++) { //doesnt print, how to call list? 
+        cout << aList[i] << endl;
+    }
     cout << "Enter the ID of the advisee from the list: ";
     cin >> tempIDStr;
     tempID = stoi(tempIDStr);
@@ -282,15 +284,28 @@ bool getNewStudentInfo(std::string *sName, std::string *sLevel, std::string *sMa
 }
 
 bool getNewFacultyInfo(std::string *fName, std::string *fLevel, std::string *Department, std::vector<int> *aList) {
+    bool moreAdvisees = true;
+    int tempID;
+    std::string option;
     cout << "Faculty Name: ";
     cin >> *fName;
     cout << "Faculty Level: ";
     cin >> *fLevel;
     cout << "Faculty Department: ";
     cin >> *Department;
-    cout << "Advisee IDs: ";
-    // for (int i = 0; i < masterDBPtr.adviseeListPtr->size(); i++) {
-    //     cin >> 
-    // }
+    cout << "Advisee IDs (one at a time please): ";
+    while (moreAdvisees = true) {
+        cin >> tempID;
+        aList->push_back(tempID);
+        cout << "Would you like to add another advisee? yes or no" << endl;
+        cin >> option;
+        if (option == "yes") {
+            moreAdvisees = true;
+        } else if (option == "no") {
+            moreAdvisees = false;
+        } else {
+            cout << "ERROR: yes or no only" <<endl;
+        }
+    }
     return true;
 }

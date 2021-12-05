@@ -5,6 +5,8 @@
 #include "Student.h"
 #include "Faculty.h"
 #include "BST.h"
+#include <stdlib.h>
+#include <stack>
 
 class StudentDatabase{
 private:

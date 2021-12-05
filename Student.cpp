@@ -6,11 +6,15 @@ int Student::lastStudentID = 1000;
 
 /* ***** static class functions ***** */
 
-int Student::getNextStudentID(){
+int Student::getNextStudentID() {
     return ++Student::lastStudentID;
 }
 
-void Student::setLastStudentID(int lastSID){
+int Student::getLastStudentID() {
+    return Student::lastStudentID;
+}
+
+void Student::setLastStudentID(int lastSID) {
     if (lastSID > Student::lastStudentID){
         Student::lastStudentID = lastSID;
     }
@@ -94,13 +98,27 @@ Student::Student(std::string sBuff) {
 Student::~Student() {
     
 }
-
-std::string Student::toString() {
-    return " ";
+/*toString() appends values with delimiter to write to file*/
+std::string Student::toString() const {
+    std::string studentStr;
+    studentStr = std::to_string(this->studentID) + "," 
+                + this->studentName + ","
+                + this->studentLevel + "," 
+                + this->studentMajor + ","
+                + std::to_string(this->studentGPA) + ","
+                + std::to_string(this->studentAdvisorID);
+    return studentStr;
 }
 
-std::string Student::toDisplay() {
-    return " ";
+std::string Student::toDisplay() const {
+    std::string studentDisplay;
+    studentDisplay = "Student ID: " + std::to_string(this->studentID) + "\n" 
+                    + "Student Name: " + this->studentName + "\n"
+                    + "Student Level: " + this->studentLevel + "\n" 
+                    + "Student Major: " + this->studentMajor + "\n"
+                    + "Student GPA: " + std::to_string(this->studentGPA) + "\n" 
+                    + "Student Advisor: " + std::to_string(this->studentAdvisorID);
+    return studentDisplay;
 }
 
 int Student::getStudentID() {
@@ -123,24 +141,29 @@ double Student::getStudentGPA() {
     return studentGPA;
 }
 
-void Student::setStudentGPA(double sGPA) {
-    
+bool Student::setStudentGPA( double sGPA ) {
+    if ( sGPA < 0.0 || sGPA > 4.0) {
+        std::cout << "ERROR: GPA must be within 0.0-4.0 range" << std::endl;
+        return false;
+    }
+    this->studentGPA = sGPA;
+    return true;
 }
 
 int Student::getStudentAdvisorID() {
     return studentAdvisorID;
 }
 
-void Student::setStudentAdvisorID(int sAdvisorID) {
-    
+void Student::setStudentAdvisorID( int sAdvisorID ) {
+    this->studentAdvisorID = sAdvisorID;
 }
 
 
-bool Student::operator<(const Student& studentB) {
+bool Student::operator<( const Student& studentB ) {
     return this->studentID < studentB.studentID;
 }
 
-Student& Student::operator=(const Student& studentB) {
+Student& Student::operator=( const Student& studentB ) {
     if ( this != &studentB) {
         this->studentID = studentB.studentID;
         this->studentName = studentB.studentName;
@@ -152,6 +175,11 @@ Student& Student::operator=(const Student& studentB) {
     return *this;
 }
 
-bool Student::operator==(const Student& studentB) {
+bool Student::operator==( const Student& studentB ) {
     return this->studentID == studentB.studentID;
+}
+
+std::ostream& operator<<(std::ostream &os, const Student &s) {
+    os << s.toDisplay();
+    return os;
 }
