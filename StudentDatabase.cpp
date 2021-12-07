@@ -1,3 +1,10 @@
+/*
+Katie Tang
+2313452
+htang@chapman.edu
+CPSC-350-02
+Assignment 6: Student Database
+*/
 #include <iostream>
 #include "StudentDatabase.h"
 //initialize class constants
@@ -7,6 +14,10 @@ const std::string StudentDatabase::facultyFileName = "facultyTable.txt";
 StudentDatabase::StudentDatabase() {
     masterStudentPtr = nullptr;
     masterFacultyPtr = nullptr;
+    studentRollbackPtr = nullptr;
+    facultyRollbackPtr = nullptr;
+    sOperationStackPtr = nullptr;
+    fOperationStackPtr = nullptr;
 }
 
 StudentDatabase::~StudentDatabase() {
@@ -68,6 +79,13 @@ int StudentDatabase::addStudent(std::string studentName, std::string studentLeve
     newStudent->setStudentGPA(GPA);
     newStudent->setStudentAdvisorID(0);
     masterStudentPtr->insert(*newStudent);
+    //store data for rollback 
+    // if (studentRollbackPtr->getSize() > 5 && sOperationStackPtr->getSize() > 5) {
+    //     studentRollbackPtr->pop();
+    //     sOperationStackPtr->pop();
+    // }
+    // studentRollbackPtr->push(*newStudent);
+    // sOperationStackPtr->push("Add");
 }
 
 void StudentDatabase::displayStudent(int studentID) {
@@ -88,6 +106,13 @@ void StudentDatabase::deleteStudent(int studentID) {
     } else {
         masterStudentPtr->deleteNode(*tempPtr);
     }
+    //store data for rollback 
+    // if (studentRollbackPtr->getSize() > 5 && sOperationStackPtr->getSize() > 5) {
+    //     studentRollbackPtr->pop();
+    //     sOperationStackPtr->pop();
+    // }
+    // studentRollbackPtr->push(*tempPtr);
+    // sOperationStackPtr->push("Delete");
 }
 
 void StudentDatabase::printAllStudents() {
@@ -125,6 +150,13 @@ void StudentDatabase::changeAdvisorID(int studentID, int facultyID) {
         tempStudentPtr->setStudentAdvisorID(facultyID);
         cout << "Student advisor changed" << endl;
     }
+    //store data for rollback 
+    // if (studentRollbackPtr->getSize() > 5 && sOperationStackPtr->getSize() > 5) {
+    //     studentRollbackPtr->pop();
+    //     sOperationStackPtr->pop();
+    // }
+    // studentRollbackPtr->push(*tempStudentPtr);
+    // sOperationStackPtr->push("Change");
 }
 
 /* ***** faculty functions ***** */
@@ -141,6 +173,13 @@ int StudentDatabase::addFaculty(int facultyID, std::string facultyName, std::str
         newFaculty->setAdvisee(*it);
     }
     masterFacultyPtr->insert(*newFaculty);
+    //store data for rollback 
+    // if (facultyRollbackPtr->getSize() > 5 && fOperationStackPtr->getSize() > 5) {
+    //     facultyRollbackPtr->pop();
+    //     fOperationStackPtr->pop();
+    // }
+    // facultyRollbackPtr->push(*newFaculty);
+    // fOperationStackPtr->push("Add");
 }
 
 void StudentDatabase::displayFaculty(int facultyID) {
@@ -161,6 +200,13 @@ void StudentDatabase::deleteFaculty(int facultyID) {
     } else {
         masterFacultyPtr->deleteNode(*tempPtr);
     }
+    //store data for rollback 
+    // if (facultyRollbackPtr->getSize() > 5 && fOperationStackPtr->getSize() > 5) {
+    //     facultyRollbackPtr->pop();
+    //     fOperationStackPtr->pop();
+    // }
+    // facultyRollbackPtr->push(*tempPtr);
+    // fOperationStackPtr->push("Delete");
 }
 
 void StudentDatabase::printAllFaculty() {
@@ -176,8 +222,16 @@ void StudentDatabase::printAdvisees(int facultyID) {
 
 void StudentDatabase::removeAdvisee(int facultyID, int studentID) {
     Faculty tempFaculty(facultyID, "", "", "");
+    Faculty *tempPtr = masterFacultyPtr->find(tempFaculty);
     tempFaculty.removeAdvisee(studentID);
     cout << "Advisee: " << studentID << " removed.";
+    //store data for rollback 
+    // if (facultyRollbackPtr->getSize() > 5 && fOperationStackPtr->getSize() > 5) {
+    //     facultyRollbackPtr->pop();
+    //     fOperationStackPtr->pop();
+    // }
+    // facultyRollbackPtr->push(*tempPtr);
+    // fOperationStackPtr->push("Remove");
 }
 
 std::vector<int> StudentDatabase::getAdviseeList(int facultyID) {
@@ -298,14 +352,99 @@ bool StudentDatabase::saveFacultyToFile(std::string fileName) {
     facultyFile.close();
 }
 
-void StudentDatabase::Rollback() {
-    
-    //get data for functions that changed the tree
-    //use stack to store operations and data
+bool StudentDatabase::Rollback() {
+    bool rVal = true;
+    if ( ! studentRollback() ) {
+        cout << "ERROR: Unable to rollback student" << endl;
+        rVal = false;
+    }
+    if ( ! facultyRollback()) {
+        cout << "ERROR: Unable to rollback faculty" << endl;
+        rVal = false;
+    }
+    return rVal;
+
+}
+
+bool StudentDatabase::studentRollback() {
+
+    // if (sOperationStackPtr->peek() == "Add" ) { //then delete
+    //     Student *studentPtr = studentRollbackPtr->peek();
+    //     masterStudentPtr->deleteNode(*studentPtr);
+    //     sOperationStackPtr->pop();
+    // }
+    // if (sOperationStackPtr->peek() == "Delete" ) { //then add
+    //     Student *studentPtr = studentRollbackPtr->peek();
+    //     int sID;
+    //     sID = studentPtr->getLastStudentID();
+    //     std::string sName;
+    //     sName = studentPtr->getStudentName();
+    //     std::string sLevel;
+    //     sLevel = studentPtr->getStudentLevel();
+    //     std::string sMajor;
+    //     sMajor = studentPtr->getStudentMajor();
+    //     double GPA;
+    //     GPA = studentPtr->getStudentGPA();
+    //     int advisor;
+    //     advisor = studentPtr->getStudentAdvisorID();
+    //     Student *newStudent = new Student(sID, sName, sLevel, sMajor);
+    //     if (newStudent == nullptr) {
+    //         cout << "ERROR: Unable to construct new student" << endl;
+    //         return 0;
+    //     }
+    //     newStudent->setStudentGPA(GPA);
+    //     newStudent->setStudentAdvisorID(advisor);
+    //     masterStudentPtr->insert(*newStudent);
+    //     sOperationStackPtr->pop();
+    // }
+    // if (sOperationStackPtr->peek() == "Change" ) { //then change back
+    //     Student *studentPtr = studentRollbackPtr->peek();
+    //     int facultyID = studentPtr->getStudentAdvisorID();
+    //     studentPtr->setStudentAdvisorID(facultyID);
+    //     sOperationStackPtr->pop();
+    // }
+     return true;
+}
+
+bool StudentDatabase::facultyRollback() {
+    // if (fOperationStackPtr->peek() == "Add" ) { //then delete
+    //     Faculty *facultyPtr = facultyRollbackPtr->peek();
+    //     masterFacultyPtr->deleteNode(*facultyPtr);
+    //     fOperationStackPtr->pop();
+    // }
+    // if (fOperationStackPtr->peek() == "Delete" ) { //then add
+    //     Faculty *facultyPtr = facultyRollbackPtr->peek();
+    //     int fID;
+    //     fID = facultyPtr->getLastFacultyID();
+    //     std::string fName;
+    //     fName = facultyPtr->getFacultyName();
+    //     std::string fLevel;
+    //     fLevel = facultyPtr->getFacultyLevel();
+    //     std::string fDepartment;
+    //     fDepartment = facultyPtr->getFacultyDepartment();
+    //     Faculty *newFaculty = new Faculty(fID, fName, fLevel, fDepartment);
+    //     if (newFaculty == nullptr) {
+    //         cout << "ERROR: Unable to construct new student" << endl;
+    //         return 0;
+    //     }
+    //     for( std::vector<int>::iterator it = aList.begin() ; it != aList.end(); ++it ) {
+    //     newFaculty->setAdvisee(*it);
+    //     }
+    //     masterFacultyPtr->insert(*newFaculty);
+    //     fOperationStackPtr->pop();
+    // }
+    // if (fOperationStackPtr->peek() == "Remove" ) { //then put back
+
+    //     fOperationStackPtr->pop();
+    // }
+     return true;
 }
 
 void StudentDatabase::exit() {
     delete masterStudentPtr;
     delete masterFacultyPtr;
+    // delete studentRollbackPtr;
+    // delete facultyRollbackPtr;
+    // delete operationStackPtr;
     exit();
 }

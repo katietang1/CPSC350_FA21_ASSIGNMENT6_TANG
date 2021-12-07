@@ -1,3 +1,10 @@
+/*
+Katie Tang
+2313452
+htang@chapman.edu
+CPSC-350-02
+Assignment 6: Student Database
+*/
 #ifndef STUDENTDATABASE_H
 #define STUDENTDATABASE_H
 
@@ -5,6 +12,7 @@
 #include "Student.h"
 #include "Faculty.h"
 #include "BST.h"
+#include "GenStack.h"
 #include <stdlib.h>
 #include <stack>
 
@@ -14,6 +22,11 @@ private:
     static const std::string facultyFileName;
     BST<Student> *masterStudentPtr;
     BST<Faculty> *masterFacultyPtr;
+    GenStack<Student> *studentRollbackPtr;
+    GenStack<Faculty> *facultyRollbackPtr;
+    GenStack<std::string> *sOperationStackPtr;
+    GenStack<std::string> *fOperationStackPtr;
+    
     bool loadStudentsFromFile(std::string fileName);
     bool saveStudentsToFile(std::string fileName);
     bool loadFacultyFromFile(std::string fileName);
@@ -42,7 +55,9 @@ public:
     //program functions
     bool loadFromFiles();
     bool saveToFiles();
-    void Rollback();
+    bool Rollback();
+    bool studentRollback();
+    bool facultyRollback();
     void exit();
 };
 

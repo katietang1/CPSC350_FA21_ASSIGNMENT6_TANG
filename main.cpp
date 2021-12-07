@@ -1,3 +1,10 @@
+/*
+Katie Tang
+2313452
+htang@chapman.edu
+CPSC-350-02
+Assignment 6: Student Database
+*/
 #include <iostream>
 #include "StudentDatabase.h"
 
