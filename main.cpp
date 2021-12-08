@@ -7,6 +7,7 @@ Assignment 6: Student Database
 */
 #include <iostream>
 #include "StudentDatabase.h"
+#include "LinkedList.h"
 
 //forward declarations 
 void displayAllStudents();
@@ -21,16 +22,18 @@ int addFacultyMember();
 void deleteFacultyMember();
 void changeStudentAdvisor();
 void removeFacultyAdvisee();
-void rollbackChange();
 void exitProgram();
 int selectOneStudent(std::string aTitle);
 int selectOneStudent(std::vector<int> studentIDList);
 int selectOneFacultyMember(std::string aTitle);
 bool getNewStudentInfo(std::string *sName, std::string *sLevel, std::string *sMajor, double *sGPA, int *sAdvisorID);
 bool getNewFacultyInfo(std::string *fName, std::string *fLevel, std::string *Department, std::vector<int> *aList);
+void rollbackChange();
+void storeRollDB();
 
 //global variables
 StudentDatabase *masterDBPtr;
+LinkedList<StudentDatabase> rollList;
 
 int main (int argc, char **argv){
     char optionLine[5];
@@ -42,6 +45,10 @@ int main (int argc, char **argv){
         cout << "Student Database start up was unsucessful" << endl;
         return -1;
     }
+
+    //Store DB for first RollBack
+    storeRollDB();
+
     //execute menu
     do {
         cout << "1. Print all students and their information (sorted by ascending id #)" << endl;
@@ -58,6 +65,7 @@ int main (int argc, char **argv){
         cout << "12. Remove an advisee from a faculty member given the ids" << endl; 
         cout << "13. Rollback" << endl;
         cout << "14. Exit" << endl;
+        cout << endl;
 
         //get option and validate. if invalid, error message, continue (goes to end of loop)
         cout << "Please enter the number of the option you have chosen: ";
@@ -65,6 +73,7 @@ int main (int argc, char **argv){
         option = atoi(optionLine);
         if (option < 1 || option > 14) {
             cout << "You must enter a number between 1-14, please try again" << endl;
+            cout << endl;
             continue;
         }
     
@@ -90,21 +99,27 @@ int main (int argc, char **argv){
             break;
         case 7:
             addStudent();
+            storeRollDB();
             break;
         case 8:
             deleteStudent();
+            storeRollDB();
             break;
         case 9:
             addFacultyMember();
+            storeRollDB();
             break;
         case 10:
             deleteFacultyMember();
+            storeRollDB();
             break;
         case 11:
             changeStudentAdvisor();
+            storeRollDB();
             break;
         case 12:
             removeFacultyAdvisee();
+            storeRollDB();
             break;
         case 13:
             rollbackChange();
@@ -124,35 +139,41 @@ int main (int argc, char **argv){
 /* 1. Print all students and their information (sorted by ascending id #) */
 void displayAllStudents() {
     masterDBPtr->printAllStudents();
+    cout << endl;
 }
 
 /* 2. Print all faculty and their information (sorted by ascending id #) */
 void displayAllFaculty() {
     masterDBPtr->printAllFaculty();
+    cout << endl;
 }
 
 /* 3. Find and display student information given the students id */
 void displaySelectedStudent() {
     int tempID = selectOneStudent("Select the student you want to display");
     masterDBPtr->displayStudent(tempID);
+    cout << endl;
 }
 
 /*4. Find and display faculty information given the faculty id */
 void displaySelectedFaculty() {
     int tempID = selectOneFacultyMember("Select the faculty you want to display");
     masterDBPtr->displayFaculty(tempID);
+    cout << endl;
 }
 
 /*5. Given a student’s id, print the name and info of their faculty advisor */
 void displayStudentAdvisor() {
     int tempID = selectOneStudent("Select the student whose advisor you want to display");
     masterDBPtr->printStudentAdvisor(tempID);
+    cout << endl;
 }
 
 /*6. Given a faculty id, print ALL the names and info of his/her advisees. */
 void displayFacultyAdvisees() {
     int tempID = selectOneFacultyMember("Select a faculty member whose advisees you want to display");
     masterDBPtr->getAdviseeList(tempID);
+    cout << endl;
 }
 
 /*7. Add a new student */
@@ -167,6 +188,7 @@ int addStudent() {
         studentID = masterDBPtr->addStudent( studentName, studentLevel, Major, GPA);
     }
     cout << "New student added, ID: " << studentID << endl;
+    cout << endl;
     return studentID;
 }
 
@@ -174,6 +196,7 @@ int addStudent() {
 void deleteStudent() {
     int tempID = selectOneStudent("Select the student you would like to delete");
     masterDBPtr->deleteStudent(tempID);
+    cout << endl;
 }
 
 /*9. Add a new faculty member */
@@ -187,6 +210,7 @@ int addFacultyMember() {
         masterDBPtr->addFaculty(facultyID, facultyName, facultyLevel, Department, aList);
     }
     cout << "New faculty added, ID: " << facultyID << endl;
+    cout << endl;
     return facultyID;
 }
 
@@ -194,7 +218,7 @@ int addFacultyMember() {
 void deleteFacultyMember() {
     int tempID = selectOneFacultyMember("Select the faculty memebr you would like to delete");
     masterDBPtr->deleteFaculty(tempID);
-
+    cout << endl;
 }
 
 /*11. Change a student’s advisor given the student id and the new faculty id. */
@@ -202,7 +226,7 @@ void changeStudentAdvisor() {
     int tempStudentID = selectOneStudent("Select the student for who's advisor you would like to change");
     int tempFacultyID = selectOneFacultyMember("Select the advisor you like to remove");
     masterDBPtr->changeAdvisorID(tempStudentID, tempFacultyID);
-
+    cout << endl;
 }
 
 /*12. Remove an advisee from a faculty member given the ids */
@@ -211,6 +235,7 @@ void removeFacultyAdvisee() {
     std::vector<int> aList = masterDBPtr->getAdviseeList(tempFacultyID);
     int tempStudentID = selectOneStudent(aList);
     masterDBPtr->removeAdvisee(tempFacultyID, tempStudentID);
+    cout << endl;
 }
 
 /*13. Rollback */
@@ -221,7 +246,31 @@ the last 5 commands that CHANGED the DB.  (Commands that simply display data do
 not count.)  This will involve keeping snapshots of the DB before and after commands 
 are issued.  The implementation details for this are left up to you.  */
 void rollbackChange() {
-    masterDBPtr->Rollback();
+    if (rollList.getSize() == 0)
+    {
+        cout << "You have no more chance to rollback." << endl;
+        return;
+    }
+    else{
+        rollList.removeFront();
+        StudentDatabase rollDB = rollList.getFront();
+        masterDBPtr = &rollDB;
+        rollList.removeFront();
+    }
+    cout << endl;
+}
+
+void storeRollDB() {
+    if (rollList.getSize() < 7)
+    {
+        StudentDatabase rollDB = *masterDBPtr;
+        rollList.insertFront(rollDB);
+    }
+    else {
+        rollList.removeBack();
+        StudentDatabase rollDB = *masterDBPtr;
+        rollList.insertFront(rollDB);
+    }
 }
 
 /*14. Exit */

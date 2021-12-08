@@ -12,9 +12,7 @@ Assignment 6: Student Database
 #include "Student.h"
 #include "Faculty.h"
 #include "BST.h"
-#include "GenStack.h"
 #include <stdlib.h>
-#include <stack>
 
 class StudentDatabase{
 private:
@@ -22,11 +20,6 @@ private:
     static const std::string facultyFileName;
     BST<Student> *masterStudentPtr;
     BST<Faculty> *masterFacultyPtr;
-    GenStack<Student> *studentRollbackPtr;
-    GenStack<Faculty> *facultyRollbackPtr;
-    GenStack<std::string> *sOperationStackPtr;
-    GenStack<std::string> *fOperationStackPtr;
-    
     bool loadStudentsFromFile(std::string fileName);
     bool saveStudentsToFile(std::string fileName);
     bool loadFacultyFromFile(std::string fileName);
@@ -55,9 +48,6 @@ public:
     //program functions
     bool loadFromFiles();
     bool saveToFiles();
-    bool Rollback();
-    bool studentRollback();
-    bool facultyRollback();
     void exit();
 };
 
