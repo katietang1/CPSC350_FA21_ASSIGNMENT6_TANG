@@ -316,5 +316,5 @@ bool StudentDatabase::saveFacultyToFile(std::string fileName) {
 void StudentDatabase::exit() {
     delete masterStudentPtr;
     delete masterFacultyPtr;
-    exit();
+    //exit();
 }

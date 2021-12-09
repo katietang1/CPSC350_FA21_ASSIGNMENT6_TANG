@@ -312,7 +312,7 @@ TreeNode<T>* BST<T>::getSuccessor(TreeNode<T> *d){
     //check if succ is a descendant of the right child
     if (successor != d->right){
         sp->left = successor->right;
-        successor->right = d->right;
+        successor= d->right;
     }
     return successor;
 
