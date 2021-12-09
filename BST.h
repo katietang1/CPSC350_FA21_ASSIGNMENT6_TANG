@@ -79,7 +79,7 @@ BST<T>::~BST(){
 }
 
 template <class T>
-void BST<T>::clear(TreeNode <T> *d) {   //belts and suspenders
+void BST<T>::clear(TreeNode <T> *d) { 
     if (d == nullptr){      
         return;
     }

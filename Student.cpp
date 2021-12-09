@@ -125,6 +125,7 @@ std::string Student::toDisplay() const {
                     + "Student Major: " + this->studentMajor + "\n"
                     + "Student GPA: " + std::to_string(this->studentGPA) + "\n" 
                     + "Student Advisor: " + std::to_string(this->studentAdvisorID);
+    std::cout << std::endl;
     return studentDisplay;
 }
 

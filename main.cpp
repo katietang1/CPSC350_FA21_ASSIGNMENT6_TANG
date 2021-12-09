@@ -185,7 +185,7 @@ int addStudent() {
     double GPA;
     int AdvisorID;
     if ( getNewStudentInfo(&studentName, &studentLevel, &Major, &GPA, &AdvisorID) ) {
-        studentID = masterDBPtr->addStudent( studentName, studentLevel, Major, GPA);
+        studentID = masterDBPtr->addStudent( studentName, studentLevel, Major, GPA, AdvisorID);
     }
     cout << "New student added, ID: " << studentID << endl;
     cout << endl;
@@ -239,12 +239,6 @@ void removeFacultyAdvisee() {
 }
 
 /*13. Rollback */
-/*The Rollback command is used if the user realizes they have made a mistake in their data 
-processing.  The Rollback command will “undo” the previous action, but only if that 
-action changed the structure of the DB.  Your program should allow the user to roll back 
-the last 5 commands that CHANGED the DB.  (Commands that simply display data do 
-not count.)  This will involve keeping snapshots of the DB before and after commands 
-are issued.  The implementation details for this are left up to you.  */
 void rollbackChange() {
     if (rollList.getSize() == 0)
     {
@@ -261,7 +255,7 @@ void rollbackChange() {
 }
 
 void storeRollDB() {
-    if (rollList.getSize() < 7)
+    if (rollList.getSize() <= 6)
     {
         StudentDatabase rollDB = *masterDBPtr;
         rollList.insertFront(rollDB);
@@ -274,8 +268,6 @@ void storeRollDB() {
 }
 
 /*14. Exit */
-/*If the user chooses to exit, you should write the faculty and student tables back out to the 
-“facultyTable” and “studentTable” files (see appendix A), clean up, and quit gracefully. */
 void exitProgram() {
     masterDBPtr->saveToFiles();
     masterDBPtr->exit();
@@ -292,8 +284,6 @@ int selectOneStudent(std::string aTitle) {
     tempID = stoi(tempIDStr);
     cout << "The student you have selected is :";
     return tempID;
-    //look up ID in tree
-    //do while loop until we find it
 }
 
 /* helper to select a single student from Advisee list and return ID*/
@@ -321,8 +311,6 @@ int selectOneFacultyMember(std::string aTitle) {
     tempID = stoi(tempIDStr);
     cout << "The faculty you have selected is :";
     return tempID;
-    //look up ID in tree
-    //do while loop until we find it
 }
 
 bool getNewStudentInfo(std::string *sName, std::string *sLevel, std::string *sMajor, double *sGPA, int *sAdvisorID) {
@@ -356,8 +344,9 @@ bool getNewFacultyInfo(std::string *fName, std::string *fLevel, std::string *Dep
         cout << "Would you like to add another advisee? yes or no" << endl;
         cin >> option;
         if (option == "yes") {
-            moreAdvisees = true;
+            continue;
         } else if (option == "no") {
+            break;
             moreAdvisees = false;
         } else {
             cout << "ERROR: yes or no only" <<endl;

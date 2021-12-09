@@ -64,7 +64,7 @@ bool StudentDatabase::shutDown() {
 
 /* ***** student functions ***** */
 //returns ID for new student
-int StudentDatabase::addStudent(std::string studentName, std::string studentLevel, std::string studentMajor, double GPA) {
+int StudentDatabase::addStudent(std::string studentName, std::string studentLevel, std::string studentMajor, double GPA, int facultyID) {
     int sID;
     sID = Student::getNextStudentID();
     Student *newStudent = new Student(sID, studentName, studentLevel, studentMajor);
@@ -73,7 +73,7 @@ int StudentDatabase::addStudent(std::string studentName, std::string studentLeve
         return 0;
     }
     newStudent->setStudentGPA(GPA);
-    newStudent->setStudentAdvisorID(0);
+    newStudent->setStudentAdvisorID(facultyID);
     masterStudentPtr->insert(*newStudent);
     return sID;
 }
@@ -193,6 +193,9 @@ void StudentDatabase::removeAdvisee(int facultyID, int studentID) {
 std::vector<int> StudentDatabase::getAdviseeList(int facultyID) {
     Faculty tempFaculty(facultyID, "", "", "");
     std::vector<int> aList = *tempFaculty.getAdviseeList();
+    for( std::vector<int>::iterator it = aList.begin() ; it != aList.end(); ++it ) {
+        cout << *it << endl;
+    }
     return aList;
 }
 

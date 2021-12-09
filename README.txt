@@ -19,19 +19,19 @@
 
 4. 	Partner: Apple Sheng
 	Received design advice from programmer relative over thanksgiving
-	Received help from Josh with << operator
 	Used in class BST and LinkedList
 	Zybooks
 	https://stackoverflow.com/
 	https://stackoverflow.com/questions/4365982/how-do-i-call-a-static-method-of-another-class
 	https://www.geeksforgeeks.org/
+	https://www.cplusplus.com/
 	https://www.cplusplus.com/reference/string/string/substr/
 	https://www.cplusplus.com/reference/string/string/npos/
 	https://www.cplusplus.com/reference/vector/vector/at/
 	https://www.cplusplus.com/reference/ostream/ostream/operator%3C%3C/
 
 
-5. 	Used 1 late day
+5. 	Used 2 late days
 	Rollback() with templated LinkedList
 	Files are formatted in csv, one student/faculty on each line
 	For empty trees (no txt file) IDs start at 1000

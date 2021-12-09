@@ -139,6 +139,7 @@ std::string Faculty::toDisplay() const {
                     + "Faculty Level: " + this->facultyLevel + "\n" 
                     + "Faculty Major: " + this->facultyDepartment + "\n"
                     + "Faculty Advisee(s): " + adviseesStr;
+    std::cout << std::endl;
     return facultyDisplay;
 }
 

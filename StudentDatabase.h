@@ -31,7 +31,7 @@ public:
     bool startUp(); 
     bool shutDown();
     //student functions
-    int addStudent(std::string studentName, std::string studentLevel, std::string studentMajor, double GPA);
+    int addStudent(std::string studentName, std::string studentLevel, std::string studentMajor, double GPA, int facultyID);
     void displayStudent(int studentID);
     void deleteStudent(int studentID);
     void printAllStudents(); //ascending ID#
